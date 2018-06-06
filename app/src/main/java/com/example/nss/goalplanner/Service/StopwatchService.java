@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
@@ -61,6 +62,8 @@ public class StopwatchService extends Service{
     private static final String TAG = "stopwatchService";
 
 
+    Handler handler =new Handler();
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -72,8 +75,6 @@ public class StopwatchService extends Service{
     @Override
     public void onCreate() {
         super.onCreate();
-
-        initChrometer();
 
         initNetwork();
 
@@ -113,12 +114,6 @@ public class StopwatchService extends Service{
     }
 
 
-    private void initChrometer(){
-
-        chronometer =new Chronometer(getApplicationContext());
-
-
-    }
 
     private void initNetwork(){
 
@@ -230,15 +225,11 @@ public class StopwatchService extends Service{
         isPlaying =true;
         start_time =System.currentTimeMillis();
 
+        chronometer = new Chronometer(getApplicationContext());
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
-        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @Override
-            public void onChronometerTick(Chronometer chronometer) {
-                long elapsedMillis =SystemClock.elapsedRealtime()- chronometer.getBase();
-                updateUI(elapsedMillis);
-            }
-        });
+
+        updateUI();
 
         EventBus.getDefault().post(new ChronometerStartEvent(start_time));
 
@@ -250,15 +241,15 @@ public class StopwatchService extends Service{
         if(isPlaying) {
             isPlaying =false;
             chronometer.stop();
+            handler.removeCallbacks(runnable);
         }
     }
 
 
 
-    private void updateUI(long time){
+    private void updateUI(){
 
-
-        EventBus.getDefault().post(new ChronometerTickEvent(time));
+        handler.postDelayed(runnable,1000);
 
     }
 
@@ -293,6 +284,19 @@ public class StopwatchService extends Service{
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
                 notification);
     }
+
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+
+            long elapsedMillis =SystemClock.elapsedRealtime()- chronometer.getBase();
+            EventBus.getDefault().post(new ChronometerTickEvent(elapsedMillis));
+            updateUI();
+
+
+        }
+    };
+
 
 
 

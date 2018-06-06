@@ -202,11 +202,11 @@ public class StopWatchFragment extends Fragment{
 
         long time = chronometerTickEvent.getTime();
 
-        long hours = TimeUnit.MICROSECONDS.toHours(time);
-        long minutes =TimeUnit.MICROSECONDS.toMinutes(time) -TimeUnit.HOURS.toMinutes(hours);
-        long seconds =TimeUnit.MICROSECONDS.toSeconds(time) -TimeUnit.MINUTES.toSeconds(minutes) -TimeUnit.HOURS.toSeconds(hours);
+        long hours = TimeUnit.MILLISECONDS.toHours(time);
+        long minutes =TimeUnit.MILLISECONDS.toMinutes(time) -TimeUnit.HOURS.toMinutes(hours);
+        long seconds =TimeUnit.MILLISECONDS.toSeconds(time) -TimeUnit.MINUTES.toSeconds(minutes) -TimeUnit.HOURS.toSeconds(hours);
 
-        txt_timer.setText(String.format("%02d:%02d",hours,minutes,seconds));
+        txt_timer.setText(String.format("%02d:%02d:%02d",hours,minutes,seconds));
     }
 
     @Subscribe
