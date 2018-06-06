@@ -189,9 +189,7 @@ public class StopwatchService extends Service{
 
     private void totaltimechanged(){
 
-        goal.setTotal_time(goal.getTotal_time() + task.getDuration());
-
-        EventBus.getDefault().post(new GoalTotaltimeChangeEvent());
+        EventBus.getDefault().post(new GoalTotaltimeChangeEvent(task.getDuration()));
 
     }
 
@@ -246,13 +244,6 @@ public class StopwatchService extends Service{
     }
 
 
-
-    private void updateUI(){
-
-        handler.postDelayed(runnable,1000);
-
-    }
-
     private void showNotification(){
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -297,9 +288,11 @@ public class StopwatchService extends Service{
         }
     };
 
+    private void updateUI(){
 
+        handler.postDelayed(runnable,1000);
 
-
+    }
 
 
 

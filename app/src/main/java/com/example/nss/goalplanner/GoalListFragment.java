@@ -353,6 +353,8 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     @Subscribe
     public void onEvent(GoalTotaltimeChangeEvent goalTotaltimeChangeEvent){
 
+        goalListAdapter.plusTotal(goalTotaltimeChangeEvent.getDuraion());
+
         goalListAdapter.notifyDataSetChanged();
 
     }

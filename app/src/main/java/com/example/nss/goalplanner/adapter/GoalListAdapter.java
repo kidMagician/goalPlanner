@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.nss.goalplanner.EventBus.SelectGoalEvent;
 import com.example.nss.goalplanner.Listener.GoalItemChangeListner;
@@ -36,6 +37,8 @@ public class GoalListAdapter extends RecyclerView.Adapter<GoalListAdapter.GoalHo
     GoalItemChangeListner goalItemChangeListner;
 
     GoalHolder selectedHolder;
+
+    int selectedPosition;
 
     String myFormat = "yyyy/MM/dd";
 
@@ -80,15 +83,23 @@ public class GoalListAdapter extends RecyclerView.Adapter<GoalListAdapter.GoalHo
                                                 @Override
                                                 public void onClick(View view) {
 
+                                                    if(!StopwatchService.isPlaying) {
 
-                                                    EventBus.getDefault().post(new SelectGoalEvent(goals.get(position)));
+                                                        selectedPosition =position;
 
-                                                    if(selectedHolder !=null){
-                                                        selectedHolder.card_goal.setBackgroundColor(Color.WHITE);
+                                                        EventBus.getDefault().post(new SelectGoalEvent(goals.get(position)));
+
+                                                        if (selectedHolder != null) {
+                                                            selectedHolder.card_goal.setBackgroundColor(Color.WHITE);
+                                                        }
+
+                                                        holder.card_goal.setBackgroundColor(context.getColor(R.color.red));
+                                                        selectedHolder = holder;
+
+                                                    }else{
+
+                                                        Toast.makeText(context,context.getString(R.string.stopwatch_alert_selectvoca_first),Toast.LENGTH_LONG).show();
                                                     }
-
-                                                    holder.card_goal.setBackgroundColor(context.getColor(R.color.red));
-                                                    selectedHolder = holder;
                                                 }
                                             }
         );
@@ -104,6 +115,15 @@ public class GoalListAdapter extends RecyclerView.Adapter<GoalListAdapter.GoalHo
 
     }
 
+    public void plusTotal(long duraion){
+
+        Goal seletedGoal = goals.get(selectedPosition);
+
+        seletedGoal.setTotal_time(seletedGoal.getTotal_time() +duraion);
+
+        goals.set(selectedPosition,seletedGoal);
+
+    }
 
 
     @Override

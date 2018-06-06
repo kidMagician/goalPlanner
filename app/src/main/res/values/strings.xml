@@ -80,6 +80,7 @@
     <!-- goalListFragment -->
     <string name="goallist_txt_nothing_goallist">There is no goal List \n you need to add goal</string>
     <string name="goallist_rv_txt_totaltime_stringformat">%d.%02d hours </string>
+    <string name ="goallist_alert_not_select_goal_during_play">you can\'t select goal during playing</string>
 
     <!-- navigataion Menu -->
     <string name="navigataion_menu_setting">setting</string>
