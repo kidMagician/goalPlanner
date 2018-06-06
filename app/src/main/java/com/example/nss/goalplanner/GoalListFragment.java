@@ -13,14 +13,18 @@ import android.view.ViewGroup;
 
 import com.example.nss.goalplanner.Activity.GoalCreateActiviy;
 import com.example.nss.goalplanner.Activity.MainActivity;
+import com.example.nss.goalplanner.EventBus.GoalTotaltimeChangeEvent;
+import com.example.nss.goalplanner.EventBus.SelectGoalEvent;
 import com.example.nss.goalplanner.Listener.GoalItemChangeListner;
-import com.example.nss.goalplanner.Listener.GoalSelectLisnter;
 import com.example.nss.goalplanner.Model.Goal;
 import com.example.nss.goalplanner.Model.GoalWarpper;
 import com.example.nss.goalplanner.Network.GoalWebService;
 import com.example.nss.goalplanner.util.NetworkUtil;
 import com.example.nss.goalplanner.Network.Requestintercepter;
 import com.example.nss.goalplanner.adapter.GoalListAdapter;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +81,6 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     private static final int PROGRESSING = 2;
 
     GoalWebService goalWebService;
-    GoalSelectLisnter goalSelectLisnter;
 
     public static final int CONNECT_TIMEOUT_IN_MS = 30000;
 
@@ -320,9 +323,7 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
 
     }
 
-    public void setGoalSelectLisnter(GoalSelectLisnter goalSelectLisnter) {
-        this.goalSelectLisnter = goalSelectLisnter;
-    }
+
 
     @Override
     public void onDelteGoalItem(int position) {
@@ -333,7 +334,7 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     @Override
     public void onSelectGoalItem(int position) {
 
-            goalSelectLisnter.setSelectedGoal( goals.get(position));
+            EventBus.getDefault().post(new SelectGoalEvent(goals.get(position)));
 
     }
 
@@ -342,5 +343,12 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     public void onModifyGoalItem(int position) {
 
         modifyGoal();
+    }
+
+    @Subscribe
+    public void onEvent(GoalTotaltimeChangeEvent goalTotaltimeChangeEvent){
+
+        goalListAdapter.notifyDataSetChanged();
+
     }
 }

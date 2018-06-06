@@ -12,6 +12,7 @@ import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.example.nss.goalplanner.BuildConfig;
+import com.example.nss.goalplanner.EventBus.GoalTotaltimeChangeEvent;
 import com.example.nss.goalplanner.Listener.StopwatchUpdateLisenter;
 import com.example.nss.goalplanner.Model.Goal;
 import com.example.nss.goalplanner.Model.Task;
@@ -20,6 +21,8 @@ import com.example.nss.goalplanner.util.NetworkUtil;
 import com.example.nss.goalplanner.Network.Requestintercepter;
 import com.example.nss.goalplanner.Network.TaskWebService;
 import com.example.nss.goalplanner.Resonse.Response;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.TimeUnit;
 
@@ -57,6 +60,8 @@ public class StopwatchService extends Service{
         return mBinder;
     }
 
+
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -64,6 +69,7 @@ public class StopwatchService extends Service{
         initChrometer();
 
         initNetwork();
+
     }
 
     @Override
@@ -81,13 +87,7 @@ public class StopwatchService extends Service{
 
         chronometer =new Chronometer(getApplicationContext());
 
-        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @Override
-            public void onChronometerTick(Chronometer chronometer) {
-                long elapsedMillis =SystemClock.elapsedRealtime()- chronometer.getBase();
-                updateUI(elapsedMillis);
-            }
-        });
+
     }
 
     private void initNetwork(){
@@ -157,8 +157,18 @@ public class StopwatchService extends Service{
 
             Toast.makeText(getApplicationContext(),getString(R.string.stopwatch_toast_txt_sucess_creategoal),Toast.LENGTH_LONG).show();
 
+            totaltimechanged();
+
             Log.d(TAG,"takscreate sucees");
         }
+
+    }
+
+    private void totaltimechanged(){
+
+        goal.setTotal_time(goal.getTotal_time() + task.getDuration());
+
+
 
     }
 
@@ -185,6 +195,8 @@ public class StopwatchService extends Service{
 
             isPlaying =!isPlaying;
         }
+
+
         super.onDestroy();
 
     }
@@ -194,8 +206,17 @@ public class StopwatchService extends Service{
         if(!isPlaying){
             isPlaying =true;
             start_time =System.currentTimeMillis();
+
             chronometer.setBase(SystemClock.elapsedRealtime());
             chronometer.start();
+            chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+                @Override
+                public void onChronometerTick(Chronometer chronometer) {
+                    long elapsedMillis =SystemClock.elapsedRealtime()- chronometer.getBase();
+                    updateUI(elapsedMillis);
+                }
+            });
+
         }
 
     }

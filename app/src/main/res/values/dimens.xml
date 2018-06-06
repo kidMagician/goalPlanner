@@ -7,5 +7,5 @@
     <dimen name="nav_header_height">176dp</dimen>
 
     <!--stopwatch -->
-    <dimen name="stopwatch_height">150dp</dimen>
+    <dimen name="stopwatch_height">170dp</dimen>
 </resources>

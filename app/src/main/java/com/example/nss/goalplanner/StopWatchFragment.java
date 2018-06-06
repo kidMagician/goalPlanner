@@ -4,9 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -16,11 +14,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.nss.goalplanner.Activity.MainActivity;
-import com.example.nss.goalplanner.Listener.GoalSelectLisnter;
+import com.example.nss.goalplanner.EventBus.GoalTotaltimeChangeEvent;
+import com.example.nss.goalplanner.EventBus.SelectGoalEvent;
 import com.example.nss.goalplanner.Listener.StopwatchUpdateLisenter;
 import com.example.nss.goalplanner.Model.Goal;
 import com.example.nss.goalplanner.Service.StopwatchService;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -31,7 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class StopWatchFragment extends Fragment implements StopwatchUpdateLisenter,ServiceConnection,GoalSelectLisnter{
+public class StopWatchFragment extends Fragment implements StopwatchUpdateLisenter,ServiceConnection{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -84,6 +85,18 @@ public class StopWatchFragment extends Fragment implements StopwatchUpdateLisent
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -105,13 +118,13 @@ public class StopWatchFragment extends Fragment implements StopwatchUpdateLisent
         fab_play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            if(selectedGoal !=null){
+                if(selectedGoal !=null){
 
-                play();
-            }else
-            {
-                Toast.makeText(getActivity(),getString(R.string.stopwatch_toast_txt_failed_creategoal),Toast.LENGTH_LONG).show();
-            }
+                    play();
+                }else
+                {
+                    Toast.makeText(getActivity(),getString(R.string.stopwatch_alert_selectvoca_first),Toast.LENGTH_LONG).show();
+                }
 
 
             }
@@ -190,6 +203,8 @@ public class StopWatchFragment extends Fragment implements StopwatchUpdateLisent
 
         getContext().unbindService(this);
         getContext().getApplicationContext().stopService(i);
+
+        EventBus.getDefault().post(new GoalTotaltimeChangeEvent());
     }
 
 
@@ -233,8 +248,6 @@ public class StopWatchFragment extends Fragment implements StopwatchUpdateLisent
             getContext().unbindService(this);
         }
 
-
-
     }
 
     @Override
@@ -256,9 +269,9 @@ public class StopWatchFragment extends Fragment implements StopwatchUpdateLisent
 
     }
 
-    @Override
-    public void setSelectedGoal(Goal selectedGoal) {
-        this.selectedGoal = selectedGoal;
+    @Subscribe
+    public void onEvent(SelectGoalEvent selectGoalEvent) {
+        this.selectedGoal = selectGoalEvent.getSelectedGoal();
 
         initView();
 

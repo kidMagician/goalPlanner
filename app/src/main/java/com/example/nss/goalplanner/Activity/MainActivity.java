@@ -15,26 +15,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.nss.goalplanner.BuildConfig;
 import com.example.nss.goalplanner.GoalListFragment;
-import com.example.nss.goalplanner.Listener.GoalSelectLisnter;
 import com.example.nss.goalplanner.Model.Goal;
-import com.example.nss.goalplanner.Network.GoalWebService;
-import com.example.nss.goalplanner.Network.Requestintercepter;
 import com.example.nss.goalplanner.Network.TaskWebService;
 import com.example.nss.goalplanner.R;
 import com.example.nss.goalplanner.Service.TokenPrefernce;
 import com.example.nss.goalplanner.StopWatchFragment;
 
-import java.util.concurrent.TimeUnit;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -66,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final String FRAGMENT_SOTPWATCH_TAG ="fragment_stopwatch";
 
     FragmentManager fragmentManager;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
