@@ -1,17 +1,26 @@
 package com.example.nss.goalplanner.Service;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Chronometer;
 import android.widget.Toast;
 
+import com.example.nss.goalplanner.Activity.MainActivity;
 import com.example.nss.goalplanner.BuildConfig;
+import com.example.nss.goalplanner.Constants;
+import com.example.nss.goalplanner.EventBus.ChronometerStartEvent;
+import com.example.nss.goalplanner.EventBus.ChronometerTickEvent;
 import com.example.nss.goalplanner.EventBus.GoalTotaltimeChangeEvent;
 import com.example.nss.goalplanner.Listener.StopwatchUpdateLisenter;
 import com.example.nss.goalplanner.Model.Goal;
@@ -40,10 +49,8 @@ public class StopwatchService extends Service{
     private Goal goal;
     private Task task;
     private Chronometer chronometer;
-    private Boolean isPlaying =false;
+    static public Boolean isPlaying =false;
 
-    private final IBinder mBinder = new MyBinder();
-    private StopwatchUpdateLisenter stopwatchUpdateLisenter;
 
     TaskWebService taskWebService;
 
@@ -53,20 +60,19 @@ public class StopwatchService extends Service{
     private static final long CONNECT_TIMEOUT_IN_MS = 3000;
     private static final String TAG = "stopwatchService";
 
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
 
-        return mBinder;
+        return null;
     }
-
 
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-;
         initChrometer();
 
         initNetwork();
@@ -76,9 +82,32 @@ public class StopwatchService extends Service{
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        startChrometer();
+        if(intent.getAction().equals(Constants.ACTION.PLAY_ACTION)){
+            if(!isPlaying){
 
-        goal =intent.getParcelableExtra(GOAL);
+                goal =intent.getParcelableExtra(GOAL);
+
+                startChrometer();
+
+//                showNotification();
+
+            }else{
+
+                createTask();
+
+                stopChrometer();
+
+                stopForeground(true);
+
+                stopSelf();
+            }
+
+
+        }else{
+
+            stopSelf();
+        }
+
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -121,10 +150,8 @@ public class StopwatchService extends Service{
         task.setGoalname(goal.getName());
         task.setStart_time(start_time);
 
-        long  duration=SystemClock.elapsedRealtime()- chronometer.getBase();
+        long duration=SystemClock.elapsedRealtime()- chronometer.getBase();
         task.setDuration(duration);
-
-        stopChrometer();
 
         if(NetworkUtil.isConnected(getApplicationContext())){
 
@@ -142,7 +169,7 @@ public class StopwatchService extends Service{
                         public void accept(Throwable throwable) throws Exception {
                             failedResponse(throwable);
                         }
-                    });
+                     });
         }else{
 
             saveNetChache();
@@ -186,13 +213,12 @@ public class StopwatchService extends Service{
 
     }
 
-
     @Override
     public void onDestroy() {
         if(isPlaying){
             createTask();
 
-            isPlaying =!isPlaying;
+            stopChrometer();
         }
 
         super.onDestroy();
@@ -201,54 +227,76 @@ public class StopwatchService extends Service{
 
     private void startChrometer(){
 
-        if(!isPlaying){
-            isPlaying =true;
-            start_time =System.currentTimeMillis();
+        isPlaying =true;
+        start_time =System.currentTimeMillis();
 
-            chronometer.setBase(SystemClock.elapsedRealtime());
-            chronometer.start();
-            chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-                @Override
-                public void onChronometerTick(Chronometer chronometer) {
-                    long elapsedMillis =SystemClock.elapsedRealtime()- chronometer.getBase();
-                    updateUI(elapsedMillis);
-                }
-            });
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.start();
+        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+            @Override
+            public void onChronometerTick(Chronometer chronometer) {
+                long elapsedMillis =SystemClock.elapsedRealtime()- chronometer.getBase();
+                updateUI(elapsedMillis);
+            }
+        });
 
-        }
+        EventBus.getDefault().post(new ChronometerStartEvent(start_time));
+
 
     }
 
     private void stopChrometer(){
 
-        if(!isPlaying) {
+        if(isPlaying) {
             isPlaying =false;
             chronometer.stop();
         }
     }
 
 
+
     private void updateUI(long time){
 
-        if(stopwatchUpdateLisenter !=null){
 
-            stopwatchUpdateLisenter.update(time);
-        }
+        EventBus.getDefault().post(new ChronometerTickEvent(time));
 
     }
 
-    public class MyBinder extends Binder {
-        public StopwatchService getService() {
-            return StopwatchService.this;
-        }
-        public long getStartTime(){return StopwatchService.this.start_time;}
-        public boolean isPlaying(){return StopwatchService.this.isPlaying;}
+    private void showNotification(){
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
+        Intent playIntent = new Intent(this, StopwatchService.class);
+        playIntent.setAction(Constants.ACTION.PLAY_ACTION);
+        PendingIntent pplayIntent = PendingIntent.getService(this, 0,
+                playIntent, 0);
+
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                R.drawable.ic_media_play);
+
+        Notification notification = new NotificationCompat.Builder(this)
+                .setContentTitle(goal.getName())
+                .setTicker(goal.getName())
+                .setContentText("My song")
+                .setSmallIcon(R.drawable.ic_media_play)
+                .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
+                .setContentIntent(pendingIntent)
+                .setOngoing(true)
+                .addAction(android.R.drawable.ic_media_play, "Play",
+                        pplayIntent).build();
+
+        startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
+                notification);
     }
 
 
 
-    public void setStopwatchUpdateLisenter(StopwatchUpdateLisenter stopwatchUpdateLisenter) {
-        this.stopwatchUpdateLisenter = stopwatchUpdateLisenter;
-    }
+
+
 
 }

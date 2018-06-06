@@ -337,7 +337,6 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     }
 
 
-
     @Override
     public void onDelteGoalItem(int position) {
 

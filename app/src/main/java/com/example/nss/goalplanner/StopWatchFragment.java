@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.nss.goalplanner.EventBus.ChronometerStartEvent;
+import com.example.nss.goalplanner.EventBus.ChronometerTickEvent;
 import com.example.nss.goalplanner.EventBus.GoalTotaltimeChangeEvent;
 import com.example.nss.goalplanner.EventBus.SelectGoalEvent;
 import com.example.nss.goalplanner.Listener.StopwatchUpdateLisenter;
@@ -32,7 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class StopWatchFragment extends Fragment implements StopwatchUpdateLisenter,ServiceConnection{
+public class StopWatchFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -56,7 +58,6 @@ public class StopWatchFragment extends Fragment implements StopwatchUpdateLisent
 
     private Goal selectedGoal;
 
-    StopwatchService stopwatchService;
 
     private static final String GOAL="goal";
 
@@ -139,28 +140,10 @@ public class StopWatchFragment extends Fragment implements StopwatchUpdateLisent
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        Intent i = new Intent(getActivity(), StopwatchService.class);
-
-        getContext().bindService(i,this,Context.BIND_AUTO_CREATE);
-
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        getContext().unbindService(this);
-    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        getContext().unbindService(this);
 
     }
 
@@ -185,11 +168,10 @@ public class StopWatchFragment extends Fragment implements StopwatchUpdateLisent
         Intent i = new Intent(getContext().getApplicationContext(), StopwatchService.class);
 
         i.putExtra(GOAL,selectedGoal);
+        i.setAction(Constants.ACTION.PLAY_ACTION);
+
         getContext().getApplicationContext().startService(i);
 
-        i = new Intent(getContext(),StopwatchService.class);
-
-        getContext().bindService(i,this,Context.BIND_AUTO_CREATE);
 
     }
 
@@ -201,9 +183,7 @@ public class StopWatchFragment extends Fragment implements StopwatchUpdateLisent
 
         Intent i = new Intent(getContext().getApplicationContext(), StopwatchService.class);
 
-        getContext().unbindService(this);
         getContext().getApplicationContext().stopService(i);
-
 
     }
 
@@ -217,8 +197,10 @@ public class StopWatchFragment extends Fragment implements StopwatchUpdateLisent
 
     }
 
-    @Override
-    public void update(long time) {
+    @Subscribe
+    public void onEvent(ChronometerTickEvent chronometerTickEvent) {
+
+        long time = chronometerTickEvent.getTime();
 
         long hours = TimeUnit.MICROSECONDS.toHours(time);
         long minutes =TimeUnit.MICROSECONDS.toMinutes(time) -TimeUnit.HOURS.toMinutes(hours);
@@ -227,35 +209,18 @@ public class StopWatchFragment extends Fragment implements StopwatchUpdateLisent
         txt_timer.setText(String.format("%02d:%02d",hours,minutes,seconds));
     }
 
-    @Override
-    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+    @Subscribe
+    public void onEvent(ChronometerStartEvent chronometerStartEvent) {
 
-        StopwatchService.MyBinder binder= (StopwatchService.MyBinder)iBinder;
+        long start_milliTime =chronometerStartEvent.getStart_time();
 
-        if(((StopwatchService.MyBinder) iBinder).isPlaying()){
+        setStartTime(start_milliTime);
 
-            stopwatchService=binder.getService();
-            stopwatchService.setStopwatchUpdateLisenter(this);
+        fab_play.setImageResource(R.drawable.ic_media_stop);
 
-            long start_milliTime =binder.getStartTime();
-
-            setStartTime(start_milliTime);
-
-            fab_play.setImageResource(R.drawable.ic_media_stop);
-
-        }else{
-
-            getContext().unbindService(this);
-        }
 
     }
 
-    @Override
-    public void onServiceDisconnected(ComponentName componentName) {
-
-        stopwatchService =null;
-
-    }
 
     private void setStartTime(long starttime){
 
