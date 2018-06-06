@@ -1,0 +1,110 @@
+<resources>
+    <string name="app_name">GoalPlanner</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- sign up -->
+    <string name="sign_up_txt_header">Create your account</string>
+    <string name="sign_up_edit_username">username</string>
+    <string name="sign_up_edit_email">Email@naver.com</string>
+    <string name="sign_up_edit_pass">password</string>
+    <string name="sign_up_edit_pass_vertify">password</string>
+    <string name="sign_up_button_ok">ok</string>
+
+    <!--- sign up edit err -->
+    <string name="sign_up_edit_username_length_err">length</string>
+    <string name="sign_up_edit_username_dublicate_err">doublicated</string>
+    <string name="sign_up_edit_email_dublicate_err">doublicated</string>
+    <string name="sign_up_edit_email_empty_err">empty</string>
+    <string name="sign_up_edit_not_email_err">not email format</string>
+    <string name="sign_up_edit_email_not_exist_err">email not exist</string>
+    <string name="sign_up_edit_pass_length_err">length</string>
+    <string name="sign_up_edit_pass_not_vertify_err">check your pass</string>
+    <string name="sign_up_fail">failed</string>
+
+    <!-- sign up etc -->
+    <string name="sign_up_progress">wait a moment</string>
+
+    <!-- sign in -->
+    <string name="sign_in_txt_header">Sign in</string>
+    <string name="sign_in_edit_username">username</string>
+    <string name="sign_in_edit_email">Email</string>
+    <string name="sign_in_edit_pass">password</string>
+    <string name="sign_in_button_ok">OK</string>
+
+    <!--- sign in edit err -->
+    <string name="sign_in_edit_username_length_err">length</string>
+    <string name="sign_in_edit_email_empty_err">empty</string>
+    <string name="sign_in_edit_not_email_err">not match</string>
+    <string name="sign_in_edit_pass_length_err">length</string>
+    <string name="sign_in_fail">failed</string>
+
+    <!--- sign in edit err -->
+    <string name="sign_in_to_sign_up">you don\'t have account?</string>
+    <string name="sign_in_find_account">you forget your password?</string>
+
+    <!-- sign up etc -->
+    <string name="sign_in_progress">wait a moment</string>
+
+    <!-- network err -->
+    <string name="network_not_connected">network not connected</string>
+
+    <!-- findpass-->
+    <string name="findpass_txt_header">Recovery your account</string>
+    <string name="findpass_edit_email">email</string>
+    <string name="findpass_submit">OK</string>
+
+    <!-- findpass err-->
+    <string name="findpass_edit_email_empty_err">empty</string>
+    <string name="findpass_in_edit_not_email_err">not match</string>
+    <string name="title_activity_start">StartActivity</string>
+
+    <!-- main -->
+    <string name="main_txt_no_network">Network is not available</string>
+    <string name="main_txt_bad_server">Server is something wrong</string>
+    <string name="main_txt_retry">Retry</string>
+
+    <!-- goalcreatefragment-->
+    <string name="goalcreate_txt_start">what is your goal?</string>
+    <string name="goalcreate_edit_goal_name">goal name</string>
+    <string name="goalcreate_edit_end_date">08/01/2000</string>
+    <string name="goalcreate_txt_reason">why do you want to become true your goal?</string>
+    <string name="goalcreate_txt_end_date">when would you do finish?</string>
+    <string name="goalcreate_btn_submit">ok</string>
+    <string name="goalcreate_err_edit_empty_goalname">enter goal name</string>
+    <string name="goalcreate_err_edit_empty_reason">enter the reason </string>
+    <string name="goalcreate_err_edit_empty_enddate">enter the enddate</string>
+    <string name="goalcreate_err_edit_goal_duplication">goal is duplicate</string>
+
+    <!-- goalListFragment -->
+    <string name="goallist_txt_nothing_goallist">There is no goal List \n you need to add goal</string>
+    <string name="goallist_rv_txt_totaltime_stringformat">%d.%02d hours </string>
+
+    <!-- navigataion Menu -->
+    <string name="navigataion_menu_setting">setting</string>
+    <string name="navigataion_menu_analystic">analystic</string>
+    <string name="navigataion_menu_logout">logout</string>
+    <string name="title_activity_navigation_base">NavigationBaseActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_welcome">Welcome\t</string>
+
+
+    <!-- goalitem -->
+    <string name="goalitem_goal_name">name:</string>
+    <string name="goalitem_goal_totaltime">totaltime:</string>
+    <string name="goalitem_goal_startdate">start date:</string>
+    <string name="goalitem_goal_enddate">end date:</string>
+
+    <!-- stopwatch fragment-->
+    <string name="stopwatch_txt_time">00:00:00</string>
+    <string name="stopwatch_txt_from"> ~</string>
+    <string name="stopwatch_alert_selectvoca_first">you hava to select vocal first</string>
+
+    <!-- stopwatch service -->
+    <string name ="stopwatch_toast_txt_sucess_creategoal"> sucess create task</string>
+    <string name="stopwatch_toast_txt_failed_creategoal">failed create taske \n it will be saved cache</string>
+
+
+</resources>
