@@ -2,6 +2,8 @@ package com.example.nss.goalplanner.Model;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.reactivex.annotations.Nullable;
+
 public class Task implements NetCache{
 
     public Task(){}
@@ -12,8 +14,9 @@ public class Task implements NetCache{
     @SerializedName("duration")
     private long duration;
 
-    @SerializedName("goal")
-    Goal goal;
+    @SerializedName("goalname")
+    @Nullable
+    private String goalname;
 
     public long getStart_time() {
         return start_time;
@@ -31,11 +34,11 @@ public class Task implements NetCache{
         this.duration = duration;
     }
 
-    public Goal getGoal() {
-        return goal;
+    public String getGoalname() {
+        return goalname;
     }
 
-    public void setGoal(Goal goal) {
-        this.goal = goal;
+    public void setGoalname(String goalname) {
+        this.goalname = goalname;
     }
 }

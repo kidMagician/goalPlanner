@@ -10,10 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.nss.goalplanner.EventBus.SelectGoalEvent;
 import com.example.nss.goalplanner.Listener.GoalItemChangeListner;
 import com.example.nss.goalplanner.Model.Goal;
 import com.example.nss.goalplanner.R;
 import com.example.nss.goalplanner.Service.StopwatchService;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -70,14 +73,15 @@ public class GoalListAdapter extends RecyclerView.Adapter<GoalListAdapter.GoalHo
         long milli_totaltime =goals.get(position).getTotal_time();
 
         long hours =TimeUnit.MILLISECONDS.toHours(milli_totaltime);
-        long minutes = TimeUnit.MINUTES.toMinutes(milli_totaltime) - TimeUnit.HOURS.toMinutes(milli_totaltime);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(milli_totaltime) - TimeUnit.HOURS.toMinutes(hours);
         holder.txt_totaltime.setText(String.format(context.getString(R.string.goallist_rv_txt_totaltime_stringformat),hours, minutes));
 
         holder.card_goal.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
 
-                                                    goalItemChangeListner.onSelectGoalItem(position);
+
+                                                    EventBus.getDefault().post(new SelectGoalEvent(goals.get(position)));
 
                                                     if(selectedHolder !=null){
                                                         selectedHolder.card_goal.setBackgroundColor(Color.WHITE);

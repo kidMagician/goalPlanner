@@ -109,6 +109,21 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        EventBus.getDefault().unregister(this);
+    }
+
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -124,13 +139,11 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
         View v= inflater.inflate(R.layout.fragment_goal_list, container, false);
         ButterKnife.bind(this, v);
 
-
         initNet();
 
         getAllGoal();
 
         initView();
-
 
         fab_create.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -329,13 +342,6 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     public void onDelteGoalItem(int position) {
 
         deleteGoal();
-    }
-
-    @Override
-    public void onSelectGoalItem(int position) {
-
-            EventBus.getDefault().post(new SelectGoalEvent(goals.get(position)));
-
     }
 
 

@@ -204,7 +204,7 @@ public class StopWatchFragment extends Fragment implements StopwatchUpdateLisent
         getContext().unbindService(this);
         getContext().getApplicationContext().stopService(i);
 
-        EventBus.getDefault().post(new GoalTotaltimeChangeEvent());
+
     }
 
 

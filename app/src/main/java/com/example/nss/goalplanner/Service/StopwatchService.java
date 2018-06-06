@@ -66,6 +66,7 @@ public class StopwatchService extends Service{
     public void onCreate() {
         super.onCreate();
 
+;
         initChrometer();
 
         initNetwork();
@@ -117,11 +118,11 @@ public class StopwatchService extends Service{
 
         task = new Task();
 
-        task.setGoal(goal);
+        task.setGoalname(goal.getName());
         task.setStart_time(start_time);
 
-        long end_time =SystemClock.elapsedRealtime()- chronometer.getBase();
-        task.setDuration(start_time -end_time);
+        long  duration=SystemClock.elapsedRealtime()- chronometer.getBase();
+        task.setDuration(duration);
 
         stopChrometer();
 
@@ -168,7 +169,7 @@ public class StopwatchService extends Service{
 
         goal.setTotal_time(goal.getTotal_time() + task.getDuration());
 
-
+        EventBus.getDefault().post(new GoalTotaltimeChangeEvent());
 
     }
 
@@ -183,9 +184,7 @@ public class StopwatchService extends Service{
 
     private void saveNetChache(){
 
-
     }
-
 
 
     @Override
@@ -195,7 +194,6 @@ public class StopwatchService extends Service{
 
             isPlaying =!isPlaying;
         }
-
 
         super.onDestroy();
 
@@ -252,4 +250,5 @@ public class StopwatchService extends Service{
     public void setStopwatchUpdateLisenter(StopwatchUpdateLisenter stopwatchUpdateLisenter) {
         this.stopwatchUpdateLisenter = stopwatchUpdateLisenter;
     }
+
 }
