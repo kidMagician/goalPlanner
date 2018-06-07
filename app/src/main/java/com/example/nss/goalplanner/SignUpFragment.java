@@ -118,10 +118,10 @@ public class SignUpFragment extends Fragment {
 
     private void signup(){
 
-        progressSignup();
-
         if(validate()){
             if(NetworkUtil.isConnected(getContext())) {
+
+                progressSignup();
 
                 Authinfo authinfo = new Authinfo(edit_username.getText().toString(), edit_emaill.getText().toString(), edit_pass.getText().toString());
 
@@ -233,7 +233,7 @@ public class SignUpFragment extends Fragment {
         String email = edit_emaill.getText().toString();
         String username = edit_username.getText().toString();
         String password = edit_pass.getText().toString();
-        String pass_vertify = edit_vertify_pass.toString();
+        String pass_vertify = edit_vertify_pass.getText().toString();
 
         boolean valid =true;
 
@@ -260,7 +260,7 @@ public class SignUpFragment extends Fragment {
             valid =false;
         }
 
-        if(password.equals(pass_vertify)){
+        if(!password.equals(pass_vertify)){
             edit_vertify_pass.setError(getString(R.string.sign_up_edit_pass_not_vertify_err));
             valid=false;
         }

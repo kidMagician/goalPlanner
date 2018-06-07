@@ -36,8 +36,8 @@
     <!--- sign in edit err -->
     <string name="sign_in_edit_username_length_err">length</string>
     <string name="sign_in_edit_email_empty_err">empty</string>
-    <string name="sign_in_edit_not_email_err">not match</string>
-    <string name="sign_in_edit_pass_length_err">length</string>
+    <string name="sign_in_edit_not_email_err">it\'s wrong email</string>
+    <string name="sign_in_edit_pass_length_err">between 4 and 12 alphanumeric characters</string>
     <string name="sign_in_fail">failed</string>
 
     <!--- sign in edit err -->
