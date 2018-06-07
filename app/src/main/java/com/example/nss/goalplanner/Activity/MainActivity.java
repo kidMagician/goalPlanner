@@ -28,8 +28,6 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    public TaskWebService taskWebService;
-
     int screen_state;
 
     private static final int SERVER_WRONG =0;
@@ -216,12 +214,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    public void setSelectedGoal(Goal selectedGoal) {
-
-        if(fragmentManager.findFragmentByTag(FRAGMENT_SOTPWATCH_TAG)!=null){
-
-            ((StopWatchFragment)fragmentManager.findFragmentByTag(FRAGMENT_SOTPWATCH_TAG)).initView();
-
-        }
-    }
 }

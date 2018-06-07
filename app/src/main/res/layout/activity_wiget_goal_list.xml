@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".wiget.WigetGoalListActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/layout_goalList"
+        android:background="@color/cardview_shadow_start_color"
+        >
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rv_goallist"/>
+
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/layout_bad_server"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/img_bad_server"
+            android:src="@drawable/server_dead"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/img_bad_server"
+            android:text="@string/main_txt_bad_server"
+            android:textSize="20dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/txt_bad_server"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_txt_retry"
+            android:textSize="25dp"
+            android:id="@+id/txt_bad_server_retry"
+            android:layout_below="@+id/txt_bad_server"
+            android:textColor="@color/colorPrimary"
+            android:layout_centerHorizontal="true"
+            android:clickable="true"
+            />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/layout_no_network"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/img_no_network"
+            android:src="@drawable/network_not_connected"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/img_no_network"
+            android:text="@string/main_txt_no_network"
+            android:textSize="20dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/txt_no_network"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_txt_retry"
+            android:textColor="@color/colorPrimary"
+            android:textSize="25dp"
+            android:layout_below="@+id/txt_no_network"
+            android:layout_centerHorizontal="true"
+            android:clickable="true"
+            android:id="@+id/txt_no_network_retry"
+            />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/layout_nothing"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/img_nothing"
+            android:src="@drawable/nothing_list"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/img_nothing"
+            android:text="@string/goallist_txt_nothing_goallist"
+            android:layout_centerHorizontal="true"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

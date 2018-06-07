@@ -12,9 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
+        <activity
+            android:name=".Activity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Activity.AuthActivity" />
         <activity android:name=".Activity.StartActivity">
             <intent-filter>
@@ -25,7 +25,19 @@
         </activity>
         <activity android:name=".Activity.SettingActivity" />
         <activity android:name=".Activity.GoalCreateActiviy" />
-        <service android:name=".Service.StopwatchService"/>
+
+        <service android:name=".Service.StopwatchService" />
+
+        <receiver android:name=".wiget.StopwatchWiget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/stopwatch_wiget_info" />
+        </receiver>
+
     </application>
 
 </manifest>

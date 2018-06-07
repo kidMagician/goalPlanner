@@ -21,6 +21,7 @@ import com.example.nss.goalplanner.Activity.MainActivity;
 import com.example.nss.goalplanner.BuildConfig;
 import com.example.nss.goalplanner.Constants;
 import com.example.nss.goalplanner.EventBus.ChronometerStartEvent;
+import com.example.nss.goalplanner.EventBus.ChronometerStopEvent;
 import com.example.nss.goalplanner.EventBus.ChronometerTickEvent;
 import com.example.nss.goalplanner.EventBus.GoalTotaltimeChangeEvent;
 import com.example.nss.goalplanner.Listener.StopwatchUpdateLisenter;
@@ -31,6 +32,7 @@ import com.example.nss.goalplanner.util.NetworkUtil;
 import com.example.nss.goalplanner.Network.Requestintercepter;
 import com.example.nss.goalplanner.Network.TaskWebService;
 import com.example.nss.goalplanner.Resonse.Response;
+import com.example.nss.goalplanner.wiget.StopwatchWiget;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -51,7 +53,6 @@ public class StopwatchService extends Service{
     private Task task;
     private Chronometer chronometer;
     static public Boolean isPlaying =false;
-
 
     TaskWebService taskWebService;
 
@@ -92,19 +93,22 @@ public class StopwatchService extends Service{
 
 //                showNotification();
 
-            }else{
+            }else {
 
                 createTask();
 
                 stopChrometer();
 
-                stopForeground(true);
+                EventBus.getDefault().post(new ChronometerStopEvent());
+                notifyWigdetServiceStop();
+
+//                stopForeground(true);
 
                 stopSelf();
             }
 
 
-        }else{
+        }else {
 
             stopSelf();
         }
@@ -208,11 +212,6 @@ public class StopwatchService extends Service{
 
     @Override
     public void onDestroy() {
-        if(isPlaying){
-            createTask();
-
-            stopChrometer();
-        }
 
         super.onDestroy();
 
@@ -229,8 +228,9 @@ public class StopwatchService extends Service{
 
         updateUI();
 
-        EventBus.getDefault().post(new ChronometerStartEvent(start_time));
+        EventBus.getDefault().post(new ChronometerStartEvent(goal.getName(),start_time));
 
+        notifyWigdetServiceStart(start_time);
 
     }
 
@@ -282,6 +282,8 @@ public class StopwatchService extends Service{
 
             long elapsedMillis =SystemClock.elapsedRealtime()- chronometer.getBase();
             EventBus.getDefault().post(new ChronometerTickEvent(elapsedMillis));
+
+            notifyWigfetChrometerTick(elapsedMillis);
             updateUI();
 
 
@@ -294,6 +296,42 @@ public class StopwatchService extends Service{
 
     }
 
+    private void notifyWigdetServiceStart(long start_time){
+        if(StopwatchWiget.is_enable) {
+            Intent i = new Intent(getApplicationContext(), StopwatchWiget.class);
+            i.setAction(Constants.ACTION.WIGET_STOPWATCH_START_ACTION);
+            i.putExtra(Constants.START_TIME, start_time);
+            i.putExtra(Constants.GOAL_NAME, goal.getName());
 
+            sendBroadcast(i);
+        }
+
+    }
+
+    private void notifyWigfetChrometerTick(long duration){
+
+        if(StopwatchWiget.is_enable) {
+            Intent i = new Intent(getApplicationContext(), StopwatchWiget.class);
+            i.setAction(Constants.ACTION.WIGET_STOPWATCH_TICK_ACTION);
+            i.putExtra(Constants.CHROMETER_TICK_DURAION, duration);
+
+            sendBroadcast(i);
+        }
+
+    }
+
+    private void notifyWigdetServiceStop(){
+
+        if(StopwatchWiget.is_enable){
+            Intent i = new Intent(getApplicationContext(), StopwatchWiget.class);
+            i.setAction(Constants.ACTION.WIGET_STOPWATCH_STOP_ACTION);
+
+            sendBroadcast(i);
+
+        }
+
+
+
+    }
 
 }

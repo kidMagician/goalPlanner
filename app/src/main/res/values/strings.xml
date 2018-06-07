@@ -80,7 +80,7 @@
     <!-- goalListFragment -->
     <string name="goallist_txt_nothing_goallist">There is no goal List \n you need to add goal</string>
     <string name="goallist_rv_txt_totaltime_stringformat">%d.%02d hours </string>
-    <string name ="goallist_alert_not_select_goal_during_play">you can\'t select goal during playing</string>
+    <string name="goallist_alert_not_select_goal_during_play">you can\'t select goal during playing</string>
 
     <!-- navigataion Menu -->
     <string name="navigataion_menu_setting">setting</string>
@@ -104,8 +104,13 @@
     <string name="stopwatch_alert_selectvoca_first">you hava to select vocal first</string>
 
     <!-- stopwatch service -->
-    <string name ="stopwatch_toast_txt_sucess_creategoal"> sucess create task</string>
+    <string name="stopwatch_toast_txt_sucess_creategoal"> sucess create task</string>
     <string name="stopwatch_toast_txt_failed_creategoal">failed create taske \n it will be saved cache</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+
+    <!-- widget -->
+    <string name="widget_toast_not_authenficated">you must sign in fisrt</string>
 
 
 </resources>

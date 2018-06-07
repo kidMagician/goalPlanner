@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import com.example.nss.goalplanner.Activity.GoalCreateActiviy;
 import com.example.nss.goalplanner.Activity.MainActivity;
 import com.example.nss.goalplanner.EventBus.GoalTotaltimeChangeEvent;
-import com.example.nss.goalplanner.EventBus.SelectGoalEvent;
 import com.example.nss.goalplanner.Listener.GoalItemChangeListner;
 import com.example.nss.goalplanner.Model.Goal;
 import com.example.nss.goalplanner.Model.GoalWarpper;
@@ -108,20 +107,6 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
         return fragment;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        EventBus.getDefault().unregister(this);
-    }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,6 +115,9 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -157,11 +145,12 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
         return v;
     }
 
+
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onDestroy() {
 
-
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     private void initView(){
@@ -236,6 +225,8 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
         }
 
     }
+
+
 
     private void gotoGoalCreate(){
 
@@ -358,4 +349,5 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
         goalListAdapter.notifyDataSetChanged();
 
     }
+
 }

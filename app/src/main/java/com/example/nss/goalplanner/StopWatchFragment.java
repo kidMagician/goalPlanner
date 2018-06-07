@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nss.goalplanner.EventBus.ChronometerStartEvent;
+import com.example.nss.goalplanner.EventBus.ChronometerStopEvent;
 import com.example.nss.goalplanner.EventBus.ChronometerTickEvent;
 import com.example.nss.goalplanner.EventBus.GoalTotaltimeChangeEvent;
 import com.example.nss.goalplanner.EventBus.SelectGoalEvent;
@@ -54,8 +55,6 @@ public class StopWatchFragment extends Fragment{
     FloatingActionButton fab_play;
 
 
-    boolean isPlaying= false;
-
     private Goal selectedGoal;
 
 
@@ -85,17 +84,6 @@ public class StopWatchFragment extends Fragment{
         return fragment;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,6 +92,7 @@ public class StopWatchFragment extends Fragment{
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -143,21 +132,21 @@ public class StopWatchFragment extends Fragment{
 
     @Override
     public void onDestroy() {
+
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
 
     }
 
     private void play(){
 
-        if(isPlaying){
+        if(StopwatchService.isPlaying){
 
             stop();
-            isPlaying =false;
 
         }else{
 
             playing();
-            isPlaying= true;
 
         }
 
@@ -177,13 +166,9 @@ public class StopWatchFragment extends Fragment{
 
     private void stop(){
 
-        fab_play.setImageResource(R.drawable.ic_media_play);
-        txt_timer.setText("00:00:00");
-        txt_start_time.setText("");
-
         Intent i = new Intent(getContext().getApplicationContext(), StopwatchService.class);
-
-        getContext().getApplicationContext().stopService(i);
+        i.setAction(Constants.ACTION.PLAY_ACTION);
+        getContext().getApplicationContext().startService(i);
 
     }
 
@@ -193,6 +178,9 @@ public class StopWatchFragment extends Fragment{
 
             txt_goal_name.setText(selectedGoal.getName());
 
+        }else{
+
+            txt_goal_name.setText("");
         }
 
     }
@@ -209,18 +197,6 @@ public class StopWatchFragment extends Fragment{
         txt_timer.setText(String.format("%02d:%02d:%02d",hours,minutes,seconds));
     }
 
-    @Subscribe
-    public void onEvent(ChronometerStartEvent chronometerStartEvent) {
-
-        long start_milliTime =chronometerStartEvent.getStart_time();
-
-        setStartTime(start_milliTime);
-
-        fab_play.setImageResource(R.drawable.ic_media_stop);
-
-
-    }
-
 
     private void setStartTime(long starttime){
 
@@ -235,10 +211,31 @@ public class StopWatchFragment extends Fragment{
     }
 
     @Subscribe
+    public void onEvent(ChronometerStartEvent chronometerStartEvent) {
+
+        long start_milliTime = chronometerStartEvent.getStart_time();
+        setStartTime(start_milliTime);
+
+        txt_goal_name.setText(chronometerStartEvent.getGoalName());
+
+        fab_play.setImageResource(R.drawable.ic_media_stop);
+
+    }
+
+    @Subscribe
     public void onEvent(SelectGoalEvent selectGoalEvent) {
         this.selectedGoal = selectGoalEvent.getSelectedGoal();
 
         initView();
 
+    }
+
+    @Subscribe
+    public void onEvent(ChronometerStopEvent chronometerStopEvent){
+
+        fab_play.setImageResource(R.drawable.ic_media_play);
+        txt_timer.setText("00:00:00");
+        txt_start_time.setText("");
+        initView();
     }
 }
