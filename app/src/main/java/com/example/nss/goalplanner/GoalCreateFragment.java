@@ -51,7 +51,7 @@ public class GoalCreateFragment extends Fragment {
 
 
     private static final int CONNECT_TIMEOUT_IN_MS= 30000;
-    private static final int CREATE_GOAL= 1;
+    private static final int CREATE_GOAL_OK= 1;
     private static final String GOAL ="goal";
 
     private static final String TAG ="GoalCreateFragment";
@@ -207,7 +207,6 @@ public class GoalCreateFragment extends Fragment {
                         }, new Consumer<Throwable>() {
                             @Override
                             public void accept(Throwable throwable) throws Exception {
-
                                 failCreatGoal();
                             }
                         });
@@ -235,7 +234,7 @@ public class GoalCreateFragment extends Fragment {
 
                 i.putExtra(GOAL,goal);
 
-                getActivity().setResult(CREATE_GOAL,i);
+                getActivity().setResult(CREATE_GOAL_OK,i);
 
                 getActivity().finish();
 
@@ -288,12 +287,12 @@ public class GoalCreateFragment extends Fragment {
 
     private void initNet(){
 
-        Requestintercepter requestintercepter = new Requestintercepter();
+        Requestintercepter requestintercepter = new Requestintercepter(getActivity());
 
         OkHttpClient okHttpClient =
                 new OkHttpClient.Builder()
                         .connectTimeout(CONNECT_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS)
-//                        .addInterceptor(requestintercepter)
+                        .addInterceptor(requestintercepter)
                         .addInterceptor(new HttpLoggingInterceptor())
                         .build();
 

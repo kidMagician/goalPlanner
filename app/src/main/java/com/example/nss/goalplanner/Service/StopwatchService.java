@@ -121,7 +121,7 @@ public class StopwatchService extends Service{
 
     private void initNetwork(){
 
-        Requestintercepter requestintercepter = new Requestintercepter();
+        Requestintercepter requestintercepter = new Requestintercepter(getApplicationContext());
 
         OkHttpClient okHttpClient =
                 new OkHttpClient.Builder()

@@ -55,7 +55,8 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
 
     private static final String TAG="GoalListFragment";
 
-    private static final int CREATE_GOAL= 1;
+    private static final int REQUST_CREATE_GOAL= 1;
+    private static final int CREATE_GOAL_OK=1;
     private static final String GOAL ="goal";
 
     @BindView(R.id.layout_goalList)
@@ -232,16 +233,16 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
 
         Intent intent = new Intent(getActivity(),GoalCreateActiviy.class);
 
-        startActivityForResult(intent,CREATE_GOAL);
+        startActivityForResult(intent,REQUST_CREATE_GOAL);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode){
+        switch (resultCode){
 
-            case CREATE_GOAL:
+            case CREATE_GOAL_OK:
 
                 Goal goal= data.getParcelableExtra(GOAL);
 
@@ -273,7 +274,7 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
 
     private void initNet(){
 
-        Requestintercepter requestintercepter = new Requestintercepter();
+        Requestintercepter requestintercepter = new Requestintercepter(getActivity());
 
         OkHttpClient okHttpClient =
                 new OkHttpClient.Builder()

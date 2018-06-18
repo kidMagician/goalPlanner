@@ -136,7 +136,7 @@ public class FindPassFragment extends Fragment {
         OkHttpClient okHttpClient =new OkHttpClient.Builder()
                 .connectTimeout(CONNECT_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS)
                 .addInterceptor(loggingInterceptor)
-                .addInterceptor(new Requestintercepter())
+                .addInterceptor(new Requestintercepter(getActivity()))
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()

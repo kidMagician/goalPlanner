@@ -38,7 +38,7 @@
     <string name="sign_in_edit_email_empty_err">empty</string>
     <string name="sign_in_edit_not_email_err">it\'s wrong email</string>
     <string name="sign_in_edit_pass_length_err">between 4 and 12 alphanumeric characters</string>
-    <string name="sign_in_fail">failed</string>
+    <string name="sign_in_fail">failed! check your email and password</string>
 
     <!--- sign in edit err -->
     <string name="sign_in_to_sign_up">you don\'t have account?</string>

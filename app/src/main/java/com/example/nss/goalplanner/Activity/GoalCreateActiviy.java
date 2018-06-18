@@ -11,7 +11,6 @@ import com.example.nss.goalplanner.R;
 
 public class GoalCreateActiviy extends AppCompatActivity {
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
