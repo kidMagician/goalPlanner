@@ -1,6 +1,8 @@
 package com.example.nss.goalplanner.Activity;
 
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -8,13 +10,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.nss.goalplanner.EventBus.LogoutEvent;
 import com.example.nss.goalplanner.GoalListFragment;
 import com.example.nss.goalplanner.Model.Goal;
 import com.example.nss.goalplanner.Network.NetCachePreference;
@@ -22,6 +29,9 @@ import com.example.nss.goalplanner.Network.TaskWebService;
 import com.example.nss.goalplanner.R;
 import com.example.nss.goalplanner.Service.TokenPrefernce;
 import com.example.nss.goalplanner.StopWatchFragment;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,12 +60,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.navigation_drawer)
     NavigationView navigration_drawer;
 
+    ProgressDialog progress_netcache;
+
     private final String FRAGMENT_GOALLIST_TAG = "fragment_goalList";
     private final String FRAGMENT_SOTPWATCH_TAG ="fragment_stopwatch";
 
     FragmentManager fragmentManager;
 
+    @Override
+    protected void onStart() {
+        super.onStart();
 
+        EventBus.getDefault().register(this);
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,8 +156,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(NetCachePreference.isNetcache()){
 
-            //Dialog
+            AlertDialog.Builder builder=new AlertDialog.Builder(this);
 
+            builder.setMessage(getString(R.string.main_logout_is_netcache));
+
+            builder.setPositiveButton(getString(R.string.main_logout_is_netcache_positive_button), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                    if(progress_netcache !=null){
+
+                        progress_netcache =new ProgressDialog(MainActivity.this);
+
+                        progress_netcache.setMessage("");
+                    }
+
+                    progress_netcache.show();
+
+                    progress_netcache.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+                }
+            });
+
+            builder.setNegativeButton(getString(R.string.main_logout_is_netcache_nagative_button), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+
+            builder.create().show();
 
         }else{
             TokenPrefernce tokenPrefernce = new TokenPrefernce(this);
@@ -145,8 +198,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             this.finish();
         }
-
-
 
     }
 
@@ -223,5 +274,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    @Subscribe()
+    public void onEvent(LogoutEvent logoutEvent){
+
+
+        switch (logoutEvent.getState()){
+
+            case LogoutEvent.SUCCESS:
+
+                TokenPrefernce tokenPrefernce = new TokenPrefernce(this);
+
+                tokenPrefernce.deleteToken();
+
+                Intent i = new Intent(this, AuthActivity.class);
+
+                startActivity(i);
+
+                this.finish();
+
+                break;
+
+            case LogoutEvent.NOTAVAILABLENETWORK:
+
+                Toast.makeText(this,getString(R.string.main_logout_not_available_network),Toast.LENGTH_LONG).show();
+
+                break;
+            case LogoutEvent.FAIL:
+
+                Toast.makeText(this,getString(R.string.main_logout_netcache_failed),Toast.LENGTH_LONG).show();
+
+                break;
+        }
+
+        progress_netcache.dismiss();
+
+        progress_netcache.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+    }
 
 }

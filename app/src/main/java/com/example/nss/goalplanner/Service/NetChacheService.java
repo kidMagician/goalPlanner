@@ -7,12 +7,19 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.example.nss.goalplanner.BuildConfig;
+import com.example.nss.goalplanner.EventBus.LogoutEvent;
+import com.example.nss.goalplanner.EventBus.SelectGoalEvent;
+import com.example.nss.goalplanner.EventBus.SendNetCacheEvent;
 import com.example.nss.goalplanner.Model.NetCache;
 import com.example.nss.goalplanner.Model.Task;
 import com.example.nss.goalplanner.Network.NetCachePreference;
 import com.example.nss.goalplanner.Network.Requestintercepter;
 import com.example.nss.goalplanner.Network.TaskWebService;
 import com.example.nss.goalplanner.Resonse.Response;
+import com.example.nss.goalplanner.util.NetworkUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -47,6 +54,16 @@ public class NetChacheService extends Service {
 
         netCachePreference = new NetCachePreference(getApplicationContext());
 
+        EventBus.getDefault().register(this);
+
+    }
+
+    @Override
+    public void onDestroy() {
+
+        EventBus.getDefault().unregister(this);
+
+        super.onDestroy();
     }
 
     public NetChacheService() {
@@ -94,16 +111,21 @@ public class NetChacheService extends Service {
         @Override
         public void run() {
 
-            if(netCachePreference.isNetcache()){
+            if(NetworkUtil.isConnected(getApplicationContext())){
 
-                List<NetCache> netCaches= netCachePreference.getAllNetCache();
+                if(netCachePreference.isNetcache()){
 
-                for(NetCache netCache:netCaches){
+                    List<NetCache> netCaches= netCachePreference.getAllNetCache();
 
-                    uploadnetCache(netCache);
+                    for(NetCache netCache:netCaches){
+
+                        uploadnetCache(netCache);
+                    }
+
                 }
-
             }
+
+
 
             sendNetCache(TIMEINTERVAL);
         }
@@ -158,4 +180,38 @@ public class NetChacheService extends Service {
         handler.postDelayed(runnable,delaytime);
     }
 
+    @Subscribe
+    public void onEvnet(SendNetCacheEvent sendNetCacheEvent){
+
+        if(NetworkUtil.isConnected(getApplicationContext())){
+
+            if(netCachePreference.isNetcache()){
+
+                List<NetCache> netCaches= netCachePreference.getAllNetCache();
+
+                for(NetCache netCache:netCaches){
+
+                    uploadnetCache(netCache);
+                }
+
+            }
+
+            if(netCachePreference.isNetcache()){
+
+                EventBus.getDefault().post((new LogoutEvent(LogoutEvent.FAIL)));
+
+            }else{
+
+                EventBus.getDefault().post((new LogoutEvent(LogoutEvent.SUCCESS)));
+            }
+
+        }
+        else{
+            EventBus.getDefault().post((new LogoutEvent(LogoutEvent.NOTAVAILABLENETWORK)));
+        }
+
+
+    }
+
 }
+

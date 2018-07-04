@@ -65,6 +65,14 @@
     <string name="main_txt_bad_server">Server is something wrong</string>
     <string name="main_txt_retry">Retry</string>
 
+    <!-- main signout -->
+    <string name="main_logout_is_netcache"> available not finished task. you want to finished?</string>
+    <string name="main_logout_not_available_network">not available network. turn on the network</string>
+    <string name="main_logout_is_netcache_positive_button">yes</string>
+    <string name="main_logout_is_netcache_nagative_button">no</string>
+    <string name="main_logout_netcache_progress">wait a moment</string>
+    <string name="main_logout_netcache_failed">failed task!! Try again signout! please!</string>
+
     <!-- goalcreatefragment-->
     <string name="goalcreate_txt_start">what is your goal?</string>
     <string name="goalcreate_edit_goal_name">goal name</string>
