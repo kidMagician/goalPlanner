@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.nss.goalplanner.GoalListFragment;
 import com.example.nss.goalplanner.Model.Goal;
+import com.example.nss.goalplanner.Network.NetCachePreference;
 import com.example.nss.goalplanner.Network.TaskWebService;
 import com.example.nss.goalplanner.R;
 import com.example.nss.goalplanner.Service.TokenPrefernce;
@@ -128,15 +129,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void signout(){
 
-        TokenPrefernce tokenPrefernce = new TokenPrefernce(this);
+        if(NetCachePreference.isNetcache()){
 
-        tokenPrefernce.deleteToken();
+            //Dialog
 
-        Intent i = new Intent(this, AuthActivity.class);
 
-        startActivity(i);
+        }else{
+            TokenPrefernce tokenPrefernce = new TokenPrefernce(this);
 
-        this.finish();
+            tokenPrefernce.deleteToken();
+
+            Intent i = new Intent(this, AuthActivity.class);
+
+            startActivity(i);
+
+            this.finish();
+        }
+
+
 
     }
 

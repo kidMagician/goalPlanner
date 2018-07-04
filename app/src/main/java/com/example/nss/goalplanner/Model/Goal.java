@@ -11,7 +11,7 @@ import java.util.Date;
  * Created by NSS on 2018-05-14.
  */
 
-public class Goal implements Parcelable {
+public class Goal implements Parcelable,NetCache {
 
     @SerializedName("name")
     private String name;

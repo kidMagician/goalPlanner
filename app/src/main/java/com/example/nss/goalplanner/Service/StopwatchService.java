@@ -27,6 +27,7 @@ import com.example.nss.goalplanner.EventBus.GoalTotaltimeChangeEvent;
 import com.example.nss.goalplanner.Listener.StopwatchUpdateLisenter;
 import com.example.nss.goalplanner.Model.Goal;
 import com.example.nss.goalplanner.Model.Task;
+import com.example.nss.goalplanner.Network.NetCachePreference;
 import com.example.nss.goalplanner.R;
 import com.example.nss.goalplanner.util.NetworkUtil;
 import com.example.nss.goalplanner.Network.Requestintercepter;
@@ -160,7 +161,6 @@ public class StopwatchService extends Service{
                     .subscribe(new Consumer<Response>() {
                         @Override
                         public void accept(Response response) throws Exception {
-
                             response(response);
                         }
                     }, new Consumer<Throwable>() {
@@ -207,6 +207,10 @@ public class StopwatchService extends Service{
     }
 
     private void saveNetChache(){
+
+        NetCachePreference netCachePreference = new NetCachePreference(getApplicationContext());
+
+        netCachePreference.setNetCache(goal);
 
     }
 

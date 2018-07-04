@@ -38,6 +38,10 @@
                 android:resource="@xml/stopwatch_wiget_info" />
         </receiver>
 
+        <service
+            android:name=".Service.NetChacheService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

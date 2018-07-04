@@ -52,7 +52,6 @@ public class TokenPrefernce {
             return true;
         }
 
-
     }
 
     public Tokeninfo getTokeninfo(){
