@@ -89,6 +89,13 @@
     <string name="goallist_txt_nothing_goallist">There is no goal List \n you need to add goal</string>
     <string name="goallist_rv_txt_totaltime_stringformat">%d.%02d hours </string>
     <string name="goallist_alert_not_select_goal_during_play">you can\'t select goal during playing</string>
+    <string name="goallist_builder_delete_goal">Delete Goal</string>
+    <string name="goallist_builder_modify_goal">Modify Goal</string>
+    <string name="goalList_txt_failed_delete_goal">failed DeleteGoal</string>
+
+    <string name="goallist_delete_confirm_message">are you sure for delete?</string>
+    <string name="goallist_delete_confirm_ok">Ok</string>
+    <string name="goallist_delete_confirm_cancel">Cancel</string>
 
     <!-- navigataion Menu -->
     <string name="navigataion_menu_setting">setting</string>

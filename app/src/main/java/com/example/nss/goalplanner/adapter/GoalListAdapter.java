@@ -1,6 +1,9 @@
 package com.example.nss.goalplanner.adapter;
 
+import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +23,7 @@ import com.example.nss.goalplanner.Service.StopwatchService;
 import org.greenrobot.eventbus.EventBus;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -107,10 +111,72 @@ public class GoalListAdapter extends RecyclerView.Adapter<GoalListAdapter.GoalHo
         holder.card_goal.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+
+                if(!StopwatchService.isPlaying) {
+
+                    ArrayList<String> entrys = new ArrayList<String>();
+
+                    entrys.add(context.getString(R.string.goallist_builder_modify_goal));
+                    entrys.add(context.getString(R.string.goallist_builder_delete_goal));
+
+
+                    CharSequence[] items= entrys.toArray(new CharSequence[entrys.size()]);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            switch(i) {
+
+                                case 0:
+
+                                    goalItemChangeListner.onModifyGoalItem(holder.getPosition());
+
+                                    break;
+
+                                case 1:
+
+                                    deleteItem(holder.getPosition());
+
+                                    break;
+                            }
+                        }
+                    });
+
+                    builder.create().show();
+
+                    return false;
+                }
+
+
                 return false;
             }
         });
 
+
+    }
+
+    private void deleteItem(int i){
+
+        AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(context);
+        confirmBuilder.setMessage(context.getString(R.string.goallist_delete_confirm_message));
+        confirmBuilder.setCancelable(true);
+        confirmBuilder.setPositiveButton(context.getText(R.string.goallist_delete_confirm_ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                goalItemChangeListner.onDeleteGoalItem(i);
+            }
+        });
+
+        confirmBuilder.setNegativeButton(context.getText(R.string.goallist_delete_confirm_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                dialogInterface.cancel();
+            }
+        });
+
+        confirmBuilder.create().show();
 
 
     }

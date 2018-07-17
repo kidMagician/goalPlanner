@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.nss.goalplanner.Activity.GoalCreateActiviy;
 import com.example.nss.goalplanner.Activity.MainActivity;
@@ -18,6 +19,8 @@ import com.example.nss.goalplanner.Listener.GoalItemChangeListner;
 import com.example.nss.goalplanner.Model.Goal;
 import com.example.nss.goalplanner.Model.GoalWarpper;
 import com.example.nss.goalplanner.Network.GoalWebService;
+import com.example.nss.goalplanner.Resonse.Response;
+import com.example.nss.goalplanner.Resonse.ResponseGoalCreate;
 import com.example.nss.goalplanner.util.NetworkUtil;
 import com.example.nss.goalplanner.Network.Requestintercepter;
 import com.example.nss.goalplanner.adapter.GoalListAdapter;
@@ -185,7 +188,7 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
                         @Override
                         public void accept(Throwable throwable) throws Exception {
 
-                            failedResponse();
+                            serverWrong();
                         }
                     });
 
@@ -195,16 +198,45 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
         }
     }
 
-    private void deleteGoal(){
+    private void deleteGoal(final Goal goal){
+
+        if(NetworkUtil.isConnected(getContext())){
+
+            goalWebService.deleteGoal(goal)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<Response>() {
+                        @Override
+                        public void accept(Response response) throws Exception {
+
+                            responseDelete(response,goal);
+
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+
+                            Toast.makeText(getActivity(), R.string.goalList_txt_failed_delete_goal,Toast.LENGTH_LONG).show();
+
+                        }
+                    });
+        }else{
+
+            Toast.makeText(getActivity(),R.string.network_not_connected,Toast.LENGTH_LONG).show();
+        }
+
+
 
     }
 
-    private void modifyGoal(){
+    private void updateGoal(Goal goal){
+
+        goalWebService.updateGoal(goal);
 
     }
 
 
-    private void failedResponse(){
+    private void serverWrong(){
 
         ((MainActivity)getActivity()).serverWrong();
     }
@@ -224,6 +256,14 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
                 nothing();
             }
         }
+
+    }
+
+    private void responseDelete(Response response,Goal goal){
+
+        goals.remove(goal);
+
+        goalListAdapter.notifyDataSetChanged();
 
     }
 
@@ -330,16 +370,16 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
 
 
     @Override
-    public void onDelteGoalItem(int position) {
+    public void onDeleteGoalItem(int position) {
 
-        deleteGoal();
+        deleteGoal(goals.get(position));
     }
 
 
     @Override
     public void onModifyGoalItem(int position) {
 
-        modifyGoal();
+        updateGoal(goals.get(position));
     }
 
     @Subscribe
