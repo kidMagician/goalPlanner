@@ -1,7 +1,8 @@
 package com.example.nss.goalplanner;
 
-import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,16 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.nss.goalplanner.Model.Goal;
 import com.example.nss.goalplanner.Network.GoalWebService;
-import com.example.nss.goalplanner.util.NetworkUtil;
 import com.example.nss.goalplanner.Network.Requestintercepter;
+import com.example.nss.goalplanner.Resonse.Response;
 import com.example.nss.goalplanner.Resonse.ResponseGoalCreate;
-import com.example.nss.goalplanner.util.KeyboardUtil;
+import com.example.nss.goalplanner.Resonse.ResponseGoalUpdate;
+import com.example.nss.goalplanner.util.NetworkUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,27 +38,21 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-
-
-public class GoalCreateFragment extends Fragment {
+public class GoalUPdateFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-
-    private static final int CONNECT_TIMEOUT_IN_MS= 30000;
-    private static final int CREATE_GOAL_OK= 1;
-    private static final String GOAL ="goal";
-
-    private static final String TAG ="GoalCreateFragment";
+    private static final String GOAL = "goal";
+    private static final String TAG="goalupdatefragment";
+    private static final int UPDATE_GOAL_OK= 1;
 
     String myFormat = "yyyy/MM/dd";
-    Calendar myCalendar = Calendar.getInstance();
+
+    private static final int CONNECT_TIMEOUT_IN_MS= 30000;
+
+    GoalWebService goalWebService;
+
+    Goal goal;
+    Goal updatedGoal;
 
     @BindView(R.id.edit_goalname)
     EditText edit_goalname;
@@ -68,20 +63,14 @@ public class GoalCreateFragment extends Fragment {
     @BindView(R.id.btn_OK)
     Button btn_OK;
 
-    GoalWebService goalWebService;
-
-    Goal goal;
-
-    public GoalCreateFragment() {
+    public GoalUPdateFragment() {
         // Required empty public constructor
     }
 
-
-    public static GoalCreateFragment newInstance(String param1, String param2) {
-        GoalCreateFragment fragment = new GoalCreateFragment();
+    public static GoalUPdateFragment newInstance(Goal goal) {
+        GoalUPdateFragment fragment = new GoalUPdateFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(GOAL, goal);
         fragment.setArguments(args);
         return fragment;
     }
@@ -90,8 +79,7 @@ public class GoalCreateFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            goal = getArguments().getParcelable(GOAL);
         }
     }
 
@@ -99,110 +87,83 @@ public class GoalCreateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v= inflater.inflate(R.layout.fragment_goal_create, container, false);
+
+        View v=inflater.inflate(R.layout.fragment_goal_update, container, false);
 
         ButterKnife.bind(this,v);
 
         initNet();
 
+        if(goal!=null){
+
+            edit_goalname.setText(goal.getName());
+
+            edit_reason.setText(goal.getReason());
+
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(myFormat, Locale.KOREA);
+
+            calendar.setTimeInMillis(goal.getEnd_date());
+
+            edit_enddate.setText(simpleDateFormat.format(calendar.getTime()));
+
+        }
+
         btn_OK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                createGoal();
+                updateGoal();
             }
         });
-
-        edit_enddate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-
-                    new DatePickerDialog(getActivity(), date, myCalendar
-                            .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                            myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-                KeyboardUtil.hideKyboard(edit_enddate);
-
-            }
-        });
-
-        edit_enddate.setKeyListener(null);
 
         return v;
     }
 
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-    }
-
-    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-
-            myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
-
-            edit_enddate.setText(sdf.format(myCalendar.getTime()));
-
-        }
-
-    };
-
-
-
-    private void createGoal(){
+    private void updateGoal(){
 
         if(validate()){
 
             if(NetworkUtil.isConnected(getActivity())){
 
-                goal = new Goal();
+                updatedGoal = new Goal();
 
-                goal.setName(edit_goalname.getText().toString());
-                goal.setReason(edit_reason.getText().toString());
+                updatedGoal.setName(edit_goalname.getText().toString());
+                updatedGoal.setReason(edit_reason.getText().toString());
 
-                String str_enddate =edit_enddate.getText().toString().toString();
+                String str_enddate =edit_enddate.getText().toString();
 
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(myFormat);
 
                 try{
                     Long end_date=simpleDateFormat.parse(str_enddate).getTime();
-                    goal.setEnd_date(end_date);
+                    updatedGoal.setEnd_date(end_date);
 
                 }catch (ParseException e){
                     Log.e(TAG,e.toString());
-                    goal.setEnd_date(0);
+                    updatedGoal.setEnd_date(0);
 
                 }finally {
-                    Log.e(TAG,"goal enddate set 0 in createGoal()");
+                    Log.e(TAG,"goal enddate set 0 in updateGoal()");
 
                 }
 
-                Long start_date = System.currentTimeMillis();
-                goal.setStart_date(start_date);
+                updatedGoal.setStart_date(goal.getStart_date());
 
-                goal.setTotal_time(0);
+                updatedGoal.setTotal_time(goal.getTotal_time());
 
-                goalWebService.createGoal(goal)
+                goalWebService.updateGoal( updatedGoal)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<ResponseGoalCreate>() {
+                        .subscribe(new Consumer<Response>() {
                             @Override
-                            public void accept(ResponseGoalCreate response) throws Exception {
+                            public void accept(Response response) throws Exception {
                                 response(response);
                             }
                         }, new Consumer<Throwable>() {
                             @Override
                             public void accept(Throwable throwable) throws Exception {
-                                failCreatGoal();
+                                failUpdateGoal();
                             }
                         });
 
@@ -213,43 +174,36 @@ public class GoalCreateFragment extends Fragment {
 
             }
         }
-
     }
-    private void response(ResponseGoalCreate response){
 
+    private void response(Response response){
         switch (response.getResoult_code()){
-            case ResponseGoalCreate.FAIL_REQUEST:
+            case ResponseGoalUpdate.FAIL_REQUEST:
 
-                failCreatGoal();
+                failUpdateGoal();
 
                 break;
-            case ResponseGoalCreate.SUCEES_REQUEST:
+            case ResponseGoalUpdate.SUCEES_REQUEST:
 
-                Intent i = new Intent();
-
-                i.putExtra(GOAL,goal);
-
-                getActivity().setResult(CREATE_GOAL_OK,i);
+                goal.setGoal(updatedGoal);
 
                 getActivity().finish();
 
                 break;
-            case ResponseGoalCreate.GOAL_DUPLICATION:
+
+            case ResponseGoalUpdate.GOAL_DUPLICATION:
 
                 edit_goalname.setError(getString(R.string.goalcreate_err_edit_goal_duplication));
                 edit_goalname.requestFocus();
 
         }
-
     }
 
-    private void failCreatGoal(){
+    private void failUpdateGoal(){
 
-        Toast.makeText(getActivity(),"failed",Toast.LENGTH_LONG).show();
     }
 
     private boolean validate(){
-
         boolean valid = true;
 
         String name = edit_goalname.getText().toString();
@@ -274,11 +228,8 @@ public class GoalCreateFragment extends Fragment {
             valid =false;
         }
 
-
         return valid;
-
     }
-
 
     private void initNet(){
 
@@ -301,9 +252,8 @@ public class GoalCreateFragment extends Fragment {
 
         goalWebService=retrofit.create(GoalWebService.class);
 
-
     }
 
-
-
 }
+
+

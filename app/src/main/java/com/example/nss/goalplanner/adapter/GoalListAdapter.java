@@ -119,7 +119,6 @@ public class GoalListAdapter extends RecyclerView.Adapter<GoalListAdapter.GoalHo
                     entrys.add(context.getString(R.string.goallist_builder_modify_goal));
                     entrys.add(context.getString(R.string.goallist_builder_delete_goal));
 
-
                     CharSequence[] items= entrys.toArray(new CharSequence[entrys.size()]);
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);

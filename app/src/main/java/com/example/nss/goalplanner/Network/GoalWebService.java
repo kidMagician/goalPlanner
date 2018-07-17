@@ -4,6 +4,7 @@ import com.example.nss.goalplanner.Model.Goal;
 import com.example.nss.goalplanner.Model.GoalWarpper;
 import com.example.nss.goalplanner.Resonse.Response;
 import com.example.nss.goalplanner.Resonse.ResponseGoalCreate;
+import com.example.nss.goalplanner.Resonse.ResponseGoalUpdate;
 
 
 import io.reactivex.Observable;
@@ -22,17 +23,17 @@ public interface GoalWebService {
     @GET("/goal/start")
     Observable<Response> startRequest();
 
-    @GET("/goal/goal")
+    @GET("/goal")
     Observable<GoalWarpper> getallGoal();
 
-    @POST("/goal/goal")
+    @POST("/goal")
     Observable<ResponseGoalCreate> createGoal(@Body Goal goal);
 
-    @DELETE("/goal/goal")
+    @DELETE("/goal")
     Observable<Response> deleteGoal(@Body Goal goal);
 
-    @PUT("/goal/goal")
-    Observable<Response> updateGoal(@Body Goal goal);
+    @PUT("/goal")
+    Observable<ResponseGoalUpdate> updateGoal(@Body Goal goal);
 
 
 }

@@ -59,7 +59,9 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     private static final String TAG="GoalListFragment";
 
     private static final int REQUST_CREATE_GOAL= 1;
+
     private static final int CREATE_GOAL_OK=1;
+
     private static final String GOAL ="goal";
 
     @BindView(R.id.layout_goalList)
@@ -86,7 +88,6 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     GoalWebService goalWebService;
 
     public static final int CONNECT_TIMEOUT_IN_MS = 30000;
-
 
     public GoalListFragment() {
         // Required empty public constructor
@@ -231,7 +232,12 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
 
     private void updateGoal(Goal goal){
 
-        goalWebService.updateGoal(goal);
+        Intent i = new Intent(getActivity(),GoalCreateActiviy.class);
+
+        i.putExtra(GOAL,goal);
+
+        startActivity(i);
+
 
     }
 
@@ -296,6 +302,11 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
                 }
 
                 break;
+
+//            case UPDATE_GOAL_OK:
+//
+//                Goal
+
         }
     }
 
