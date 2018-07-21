@@ -155,7 +155,7 @@ public class GoalListAdapter extends RecyclerView.Adapter<GoalListAdapter.GoalHo
 
     }
 
-    private void deleteItem(int i){
+    private void deleteItem(final int posotion){
 
         AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(context);
         confirmBuilder.setMessage(context.getString(R.string.goallist_delete_confirm_message));
@@ -163,7 +163,7 @@ public class GoalListAdapter extends RecyclerView.Adapter<GoalListAdapter.GoalHo
         confirmBuilder.setPositiveButton(context.getText(R.string.goallist_delete_confirm_ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                goalItemChangeListner.onDeleteGoalItem(i);
+                goalItemChangeListner.onDeleteGoalItem(posotion);
             }
         });
 

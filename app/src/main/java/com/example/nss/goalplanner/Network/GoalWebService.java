@@ -26,10 +26,10 @@ public interface GoalWebService {
     @GET("/goal")
     Observable<GoalWarpper> getallGoal();
 
-    @POST("/goal")
+    @POST("/goal/")
     Observable<ResponseGoalCreate> createGoal(@Body Goal goal);
 
-    @DELETE("/goal")
+    @POST("/goal/delete")
     Observable<Response> deleteGoal(@Body Goal goal);
 
     @PUT("/goal")
