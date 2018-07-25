@@ -55,12 +55,15 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     private String mParam1;
     private String mParam2;
 
+    Goal modifyingGoal;
 
     private static final String TAG="GoalListFragment";
 
     private static final int REQUST_CREATE_GOAL= 1;
+    private static final int REQUST_UPDATE_GOAL= 2;
 
     private static final int CREATE_GOAL_OK=1;
+    private static final int UPDATE_GOAL_OK=2;
 
     private static final String GOAL ="goal";
 
@@ -203,7 +206,7 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
 
         if(NetworkUtil.isConnected(getContext())){
 
-            goalWebService.deleteGoal(goal)
+            goalWebService.deleteGoal(goal.getId())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<Response>() {
@@ -226,8 +229,6 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
             Toast.makeText(getActivity(),R.string.network_not_connected,Toast.LENGTH_LONG).show();
         }
 
-
-
     }
 
     private void updateGoal(Goal goal){
@@ -236,11 +237,9 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
 
         i.putExtra(GOAL,goal);
 
-        startActivity(i);
-
+        startActivityForResult(i,REQUST_UPDATE_GOAL);
 
     }
-
 
     private void serverWrong(){
 
@@ -274,7 +273,6 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     }
 
 
-
     private void gotoGoalCreate(){
 
         Intent intent = new Intent(getActivity(),GoalCreateActiviy.class);
@@ -286,26 +284,26 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (resultCode){
+        if(resultCode==CREATE_GOAL_OK) {
 
-            case CREATE_GOAL_OK:
+            Goal goal = data.getParcelableExtra(GOAL);
 
-                Goal goal= data.getParcelableExtra(GOAL);
+            goals.add(goal);
 
-                goals.add(goal);
+            goalListAdapter.notifyDataSetChanged();
 
-                goalListAdapter.notifyDataSetChanged();
+            if (screen_state == NOTHING) {
 
-                if (screen_state == NOTHING){
+                visibleList();
+            }
 
-                    visibleList();
-                }
+        }else if(resultCode==UPDATE_GOAL_OK){
 
-                break;
+            Goal modifyedGoal = data.getParcelableExtra(GOAL);
 
-//            case UPDATE_GOAL_OK:
-//
-//                Goal
+            modifyingGoal.setGoal(modifyedGoal);
+
+            goalListAdapter.notifyDataSetChanged();
 
         }
     }
@@ -343,7 +341,6 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
                         build();
 
         goalWebService=retrofit.create(GoalWebService.class);
-
 
     }
 
@@ -390,7 +387,9 @@ public class GoalListFragment extends Fragment implements GoalItemChangeListner 
     @Override
     public void onModifyGoalItem(int position) {
 
-        updateGoal(goals.get(position));
+        modifyingGoal = goals.get(position);
+
+        updateGoal(modifyingGoal);
     }
 
     @Subscribe

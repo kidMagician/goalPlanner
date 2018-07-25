@@ -13,6 +13,8 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by NSS on 2018-05-14.
@@ -23,16 +25,16 @@ public interface GoalWebService {
     @GET("/goal/start")
     Observable<Response> startRequest();
 
-    @GET("/goal")
+    @GET("/goal/")
     Observable<GoalWarpper> getallGoal();
 
     @POST("/goal/")
     Observable<ResponseGoalCreate> createGoal(@Body Goal goal);
 
-    @POST("/goal/delete")
-    Observable<Response> deleteGoal(@Body Goal goal);
+    @DELETE("/goal/{id}/")
+    Observable<Response> deleteGoal(@Path("id") Long id);
 
-    @PUT("/goal")
+    @PUT("/goal/")
     Observable<ResponseGoalUpdate> updateGoal(@Body Goal goal);
 
 

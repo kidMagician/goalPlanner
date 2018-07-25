@@ -13,6 +13,10 @@ import java.util.Date;
 
 public class Goal implements Parcelable,NetCache {
 
+
+    @SerializedName("id")
+    private long id;
+
     @SerializedName("name")
     private String name;
 
@@ -30,12 +34,21 @@ public class Goal implements Parcelable,NetCache {
 
     public void setGoal(Goal goal){
 
+        this.id =goal.getId();
         this.name = goal.getName();
         this.total_time = goal.getTotal_time();
         this.reason = goal.getReason();
         this.start_date = goal.getStart_date();
         this.end_date =goal.getEnd_date();
 
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getReason() {
@@ -86,6 +99,7 @@ public class Goal implements Parcelable,NetCache {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
 
+        parcel.writeLong(getId());
         parcel.writeString(getName());
         parcel.writeLong(getStart_date());
         parcel.writeLong(getEnd_date());
@@ -96,6 +110,7 @@ public class Goal implements Parcelable,NetCache {
 
     public Goal(Parcel in){
 
+        this.id =in.readLong();
         this.name =in.readString();
         this.start_date =in.readLong();
         this.end_date = in.readLong();

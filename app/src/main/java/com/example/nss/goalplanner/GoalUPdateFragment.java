@@ -43,7 +43,7 @@ public class GoalUPdateFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String GOAL = "goal";
     private static final String TAG="goalupdatefragment";
-    private static final int UPDATE_GOAL_OK= 1;
+    private static final int UPDATE_GOAL_OK= 2;
 
     String myFormat = "yyyy/MM/dd";
 
@@ -147,7 +147,7 @@ public class GoalUPdateFragment extends Fragment {
                     Log.e(TAG,"goal enddate set 0 in updateGoal()");
 
                 }
-
+                updatedGoal.setId(goal.getId());
                 updatedGoal.setStart_date(goal.getStart_date());
 
                 updatedGoal.setTotal_time(goal.getTotal_time());
@@ -186,6 +186,12 @@ public class GoalUPdateFragment extends Fragment {
             case ResponseGoalUpdate.SUCEES_REQUEST:
 
                 goal.setGoal(updatedGoal);
+
+                Intent i =new Intent();
+
+                i.putExtra(GOAL,updatedGoal);
+
+                getActivity().setResult(UPDATE_GOAL_OK,i);
 
                 getActivity().finish();
 
