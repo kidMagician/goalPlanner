@@ -23,7 +23,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.SettingActivity" />
         <activity android:name=".Activity.GoalCreateActiviy" />
 
         <service android:name=".Service.StopwatchService" />
@@ -41,7 +40,12 @@
         <service
             android:name=".Service.NetChacheService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity
+            android:name=".Activity.SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".Activity.AnalyticsActivity"></activity>
     </application>
 
 </manifest>

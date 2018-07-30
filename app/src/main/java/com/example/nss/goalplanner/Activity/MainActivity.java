@@ -131,12 +131,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case(R.id.nav_analystic):
 
+                Intent i = new Intent(this,AnalyticsActivity.class);
+
+                startActivity(i);
+
 
                 break;
 
             case(R.id.nav_setting):
 
-                Intent i = new Intent(this,SettingActivity.class);
+                i = new Intent(this,SettingsActivity.class);
 
                 startActivity(i);
 
